@@ -1,10 +1,13 @@
 package com.joaotinelli.accounts.service.implementation;
 
 import com.joaotinelli.accounts.constants.AccountsConstants;
+import com.joaotinelli.accounts.dto.AccountsDto;
 import com.joaotinelli.accounts.dto.CustomerDto;
 import com.joaotinelli.accounts.entities.Accounts;
 import com.joaotinelli.accounts.entities.Customer;
 import com.joaotinelli.accounts.exception.CustomerAlreadyExistsException;
+import com.joaotinelli.accounts.exception.ResourceNotFoundException;
+import com.joaotinelli.accounts.mapper.AccountsMapper;
 import com.joaotinelli.accounts.mapper.CustomerMapper;
 import com.joaotinelli.accounts.repository.AccountsRepository;
 import com.joaotinelli.accounts.repository.CustomerRepository;
@@ -51,4 +54,24 @@ public class AccountsService implements IAccountsService {
         newAccount.setBranchAddress(AccountsConstants.ADDRESS);
         return newAccount;
     }
+
+    @Override
+    public CustomerDto fetchAccount(String mobileNumber) {
+        Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
+        );
+
+        Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
+                () -> new ResourceNotFoundException("Account", "customerId", customer.getCustomerId().toString())
+        );
+
+        CustomerDto customerDto = CustomerMapper.mapToCustomerDto(customer, new CustomerDto());
+        customerDto.setAccountsDto(AccountsMapper.mapToAccountsDto(accounts, new AccountsDto()));
+
+        return customerDto;
+
+    }
+
+
+
 }
