@@ -4,6 +4,8 @@ import com.joaotinelli.loans.constants.LoansConstants;
 import com.joaotinelli.loans.dto.LoansDto;
 import com.joaotinelli.loans.entity.Loans;
 import com.joaotinelli.loans.exception.LoanAlreadyExistsException;
+import com.joaotinelli.loans.exception.ResourceNotFoundException;
+import com.joaotinelli.loans.mapper.LoansMapper;
 import com.joaotinelli.loans.repository.LoansRepository;
 import com.joaotinelli.loans.service.ILoansService;
 import lombok.AllArgsConstructor;
@@ -25,11 +27,6 @@ public class LoansService implements ILoansService {
             throw new LoanAlreadyExistsException("Loan already registered with given mobileNumber" + mobileNumber);
         }
         loansRepository.save(createNewLoan(mobileNumber));
-    }
-
-    @Override
-    public LoansDto fetchLoan(String mobileNumber) {
-        return null;
     }
 
     @Override
@@ -56,5 +53,18 @@ public class LoansService implements ILoansService {
         newLoan.setAmountPaid(0);
         newLoan.setOutstandingAmount(LoansConstants.NEW_LOAN_LIMIT);
         return newLoan;
+    }
+
+    /**
+     *
+     * @param mobileNumber - Input mobile Number
+     * @return Loan Details based on a given mobileNumber
+     */
+    @Override
+    public LoansDto fetchLoan(String mobileNumber) {
+        Loans loans = loansRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Loan", "mobileNumber", mobileNumber)
+        );
+        return LoansMapper.mapToLoansDto(loans, new LoansDto());
     }
 }

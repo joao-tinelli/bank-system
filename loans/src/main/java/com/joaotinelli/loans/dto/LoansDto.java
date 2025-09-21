@@ -24,5 +24,5 @@ public class LoansDto {
     private int amountPaid;
 
     @PositiveOrZero(message = "Total outstanding amount paid should be equal or greater than zero")
-    private int outstadingAmount;
+    private int outstandingAmount;
 }
