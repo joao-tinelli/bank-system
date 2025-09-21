@@ -1,6 +1,7 @@
 package com.joaotinelli.loans.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
@@ -9,9 +10,11 @@ import lombok.Data;
 public class LoansDto {
 
     @NotEmpty(message = "Mobile number can't be null or empty")
+    @Pattern(regexp="(^$|[0-9]{10})",message = "Mobile Number must be 10 digits")
     private String mobileNumber;
 
     @NotEmpty(message = "Loan number can't be null or empty")
+    @Pattern(regexp="(^$|[0-9]{12})",message = "LoanNumber must be 12 digits")
     private String loanNumber;
 
     @NotEmpty(message = "Loan number can't be null or empty")
