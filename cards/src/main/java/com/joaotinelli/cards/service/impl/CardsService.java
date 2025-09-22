@@ -4,6 +4,8 @@ import com.joaotinelli.cards.constants.CardsConstants;
 import com.joaotinelli.cards.dto.CardsDto;
 import com.joaotinelli.cards.entity.Cards;
 import com.joaotinelli.cards.exception.CardAlreadyExistsException;
+import com.joaotinelli.cards.exception.ResourceNotFoundException;
+import com.joaotinelli.cards.mapper.CardsMapper;
 import com.joaotinelli.cards.repository.CardsRepository;
 import com.joaotinelli.cards.service.ICardsService;
 import lombok.AllArgsConstructor;
@@ -46,9 +48,17 @@ public class CardsService implements ICardsService {
         return newCard;
     }
 
+    /**
+     *
+     * @param mobileNumber - Input mobile Number
+     * @return Card Details based on a given mobileNumber
+     */
     @Override
     public CardsDto fetchCard(String mobileNumber) {
-        return null;
+        Cards cards = cardsRepository.findByMobileNumber(mobileNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Card", "mobileNumber", mobileNumber)
+        );
+        return CardsMapper.mapToCardsDto(cards, new CardsDto());
     }
 
     @Override
