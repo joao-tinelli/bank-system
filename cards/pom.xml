@@ -11,6 +11,7 @@
 	<groupId>com.joaotinelli</groupId>
 	<artifactId>cards</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 	<name>cards</name>
 	<description>Microservice for cards</description>
 	<url/>
@@ -101,6 +102,18 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.6</version>
+                <configuration>
+                    <to>
+                        <image>joaotinelli/cards:s4</image>
+                    </to>
+                </configuration>
+            </plugin>
+
 		</plugins>
 	</build>
 

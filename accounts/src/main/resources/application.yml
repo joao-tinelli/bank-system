@@ -16,3 +16,11 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+management:
+  metrics:
+    enable:
+      system: false
+      process: false
+  defaults:
+    metrics:
+      enabled: false
