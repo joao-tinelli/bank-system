@@ -1,6 +1,8 @@
 server:
   port: 9000
 spring:
+  application:
+    name: cards
   datasource:
     url: jdbc:h2:mem:testdb
     driverClassName: org.h2.Driver
@@ -14,3 +16,17 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  config:
+    import:
+      - "application_qa.yml"
+      - "application_prod.yml"
+build:
+  version: "3.0"
+cards:
+  message: "Welcome to JoaoBank cards related local APIs"
+  contactDetails:
+    name: "Joao Tinelli - Developer"
+    email: "joaotinelli@alunos.utfpr.edu.br"
+  onCallSupport:
+    - (555) 555-1234
+    - (555) 555-4321
