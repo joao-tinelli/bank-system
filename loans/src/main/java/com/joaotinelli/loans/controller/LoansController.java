@@ -2,6 +2,7 @@ package com.joaotinelli.loans.controller;
 
 import com.joaotinelli.loans.constants.LoansConstants;
 import com.joaotinelli.loans.dto.ErrorResponseDto;
+import com.joaotinelli.loans.dto.LoansContactInfoDto;
 import com.joaotinelli.loans.dto.LoansDto;
 import com.joaotinelli.loans.dto.ResponseDto;
 import com.joaotinelli.loans.service.ILoansService;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,11 +28,17 @@ import org.springframework.web.bind.annotation.*;
 )
 @RestController
 @RequestMapping(path = "/api", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 @Validated
 public class LoansController {
 
     private ILoansService iLoansService;
+
+    public LoansController(ILoansService iLoansService){
+        this.iLoansService = iLoansService;
+    }
+
+    @Autowired
+    LoansContactInfoDto loansContactInfoDto;
 
     @Operation(
             summary = "Create Loan REST API",
@@ -158,5 +166,12 @@ public class LoansController {
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseDto(LoansConstants.STATUS_417, LoansConstants.MESSAGE_417_DELETE));
         }
+    }
+
+    @GetMapping("/contact-info")
+    public ResponseEntity<LoansContactInfoDto> getContactInfo(){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(loansContactInfoDto);
     }
 }
