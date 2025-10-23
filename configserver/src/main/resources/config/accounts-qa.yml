@@ -1,13 +1,8 @@
-spring:
-  config:
-    activate:
-      on-profile: "qa"
-
 build:
   version: "2.0"
 
-cards:
-  message: "Welcome to JoaoBank cards related QA APIs"
+accounts:
+  message: "Welcome to JoaoBank accounts related QA APIs"
   contactDetails:
     name: "Joao Tinelli - QA Lead"
     email: "joaotinelli@alunos.utfpr.edu.br"

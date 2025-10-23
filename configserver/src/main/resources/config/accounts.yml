@@ -1,0 +1,11 @@
+build:
+  version: "3.0"
+accounts:
+  message: "Welcome to JoaoBank accounts related local APIs"
+  contactDetails:
+    name: "Joao Tinelli - Developer"
+    email: "joaotinelli@alunos.utfpr.edu.br"
+  onCallSupport:
+    - (555) 555-1234
+    - (555) 555-4321
+

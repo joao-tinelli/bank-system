@@ -1,0 +1,10 @@
+  build:
+    version: "3.0"
+  loans:
+    message: "Welcome to JoaoBank loans related local APIs"
+    contactDetails:
+      name: "Joao Tinelli - Developer"
+      email: "joaotinelli@alunos.utfpr.edu.br"
+    onCallSupport:
+      - (555) 555-1234
+      - (555) 555-4321
