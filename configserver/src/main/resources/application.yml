@@ -2,11 +2,17 @@ spring:
   application:
     name: "configserver"
   profiles:
-    active: native
+    #active: native
+    active: git
   cloud:
     config:
       server:
-        natvive:
-          search-locations: "classpath:/config"
+        native:
+         # search-locations: "classpath:/config"
+        git:
+          uri: "https://github.com/joao-tinelli/joaobank-config"
+          default-label: main
+          timeout: 5
+          clone-on-start: true
 server:
   port: 8071
