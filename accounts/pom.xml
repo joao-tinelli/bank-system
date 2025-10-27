@@ -147,7 +147,7 @@
                 <version>3.4.6</version>
                 <configuration>
                     <to>
-                        <image>joaotinelli/accounts:s4</image>
+                        <image>joaotinelli/accounts:s6</image>
                     </to>
                 </configuration>
             </plugin>

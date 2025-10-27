@@ -130,7 +130,7 @@
                 <version>3.4.6</version>
                 <configuration>
                     <to>
-                        <image>joaotinelli/cards:s4</image>
+                        <image>joaotinelli/cards:s6</image>
                     </to>
                 </configuration>
             </plugin>
