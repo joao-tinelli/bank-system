@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class CustomersServiceImpl implements ICustomersService {
+public class CustomersService implements ICustomersService {
 
     private AccountsRepository accountsRepository;
     private CustomerRepository customerRepository;
@@ -29,7 +29,6 @@ public class CustomersServiceImpl implements ICustomersService {
         Customer customer = customerRepository.findByMobileNumber(mobileNumber).orElseThrow(
                 () -> new ResourceNotFoundException("Customer", "mobileNumber", mobileNumber)
         );
-
         Accounts accounts = accountsRepository.findByCustomerId(customer.getCustomerId()).orElseThrow(
                 () -> new ResourceNotFoundException("Account", "customerId", customer.getCustomerId().toString())
         );
@@ -43,7 +42,7 @@ public class CustomersServiceImpl implements ICustomersService {
         ResponseEntity<CardsDto> cardsDtoResponseEntity = cardsFeignClient.fetchCardDetails(mobileNumber);
         customerDetailsDto.setCardsDto(cardsDtoResponseEntity.getBody());
 
-
         return customerDetailsDto;
+
     }
 }

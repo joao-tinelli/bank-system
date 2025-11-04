@@ -1,4 +1,4 @@
-package com.joaotinelli.loans.dto;
+package com.joaotinelli.accounts.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;

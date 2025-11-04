@@ -71,8 +71,18 @@
         </dependency>
 
         <dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 
@@ -147,7 +157,7 @@
                 <version>3.4.6</version>
                 <configuration>
                     <to>
-                        <image>joaotinelli/accounts:s6</image>
+                        <image>joaotinelli/accounts:s7</image>
                     </to>
                 </configuration>
             </plugin>
