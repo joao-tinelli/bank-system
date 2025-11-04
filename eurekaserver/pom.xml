@@ -12,6 +12,7 @@
 	<artifactId>eurekaserver</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>eurekaserver</name>
+    <packaging>jar</packaging>
 	<description>Service Discovery agebt for JoaoBank microservices</description>
 	<url/>
 	<licenses>
@@ -68,7 +69,19 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.4.6</version>
+                <configuration>
+                    <to>
+                        <image>joaotinelli/eurekaserver:s8</image>
+                    </to>
+                </configuration>
+            </plugin>
 		</plugins>
+
 	</build>
 
 </project>
