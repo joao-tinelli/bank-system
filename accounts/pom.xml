@@ -157,7 +157,7 @@
                 <version>3.4.6</version>
                 <configuration>
                     <to>
-                        <image>joaotinelli/accounts:s8</image>
+                        <image>joaotinelli/${project.artifactId}:s9</image>
                     </to>
                 </configuration>
             </plugin>
