@@ -16,6 +16,8 @@ services:
       service: network-deploy-service
 
   accountsdb:
+    volumes:
+      - accounts_data:/var/lib/mysql
     container_name: accountsdb
     ports:
       - 3306:3306
@@ -27,6 +29,8 @@ services:
 
   loansdb:
     container_name: loansdb
+    volumes:
+      - loans_data:/var/lib/mysql
     ports:
       - 3307:3306
     environment:
@@ -36,6 +40,8 @@ services:
       service: microservice-db-config
 
   cardsdb:
+    volumes:
+      - cards_data:/var/lib/mysql
     container_name: cardsdb
     ports:
       - 3308:3306
@@ -46,7 +52,7 @@ services:
       service: microservice-db-config
 
   configserver:
-    image: "joaotinelli/configserver:s8"
+    image: "joaotinelli/configserver:s9"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -64,7 +70,7 @@ services:
       service: microservice-base-config
 
   eurekaserver:
-    image: "joaotinelli/eurekaserver:s8"
+    image: "joaotinelli/eurekaserver:s9"
     container_name: eurekaserver-ms
     ports:
       - "8070:8070"
@@ -86,10 +92,16 @@ services:
       SPRING_APPLICATION_NAME: "eurekaserver"
 
   accounts:
-    image: "joaotinelli/accounts:s8"
+    image: "joaotinelli/accounts:s9"
     container_name: accounts-ms
     ports:
       - "8080:8080"
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: "accounts"
       SPRING_DATASOURCE_URL: "jdbc:mysql://accountsdb:3306/accountsdb"
@@ -98,15 +110,23 @@ services:
         condition: service_healthy
       configserver:
         condition: service_healthy
+      rabbit:
+        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-eurekaserver-config
 
   loans:
-    image: "joaotinelli/loans:s8"
+    image: "joaotinelli/loans:s9"
     container_name: loans-ms
     ports:
       - "8090:8090"
+    healthcheck:
+      test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: "loans"
       SPRING_DATASOURCE_URL: "jdbc:mysql://loansdb:3306/loansdb"
@@ -115,15 +135,23 @@ services:
         condition: service_healthy
       configserver:
         condition: service_healthy
+      rabbit:
+        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-eurekaserver-config
 
   cards:
-    image: "joaotinelli/cards:s8"
+    image: "joaotinelli/cards:s9"
     container_name: cards-ms
     ports:
       - "9000:9000"
+    healthcheck:
+      test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     environment:
       SPRING_APPLICATION_NAME: "cards"
       SPRING_DATASOURCE_URL: "jdbc:mysql://cardsdb:3306/cardsdb"
@@ -132,6 +160,26 @@ services:
         condition: service_healthy
       configserver:
         condition: service_healthy
+      rabbit:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service: microservice-eurekaserver-config
+
+  gatewayserver:
+    image: "joaotinelli/gatewayserver:s9"
+    container_name: gatewayserver-ms
+    ports:
+      - "8072:8072"
+    environment:
+      SPRING_APPLICATION_NAME: "gatewaysever"
+    depends_on:
+      accounts:
+        condition: service_healthy
+      loans:
+        condition: service_healthy
+      cards:
+        condition: service_healthy
     extends:
       file: common-config.yml
       service: microservice-eurekaserver-config
@@ -139,3 +187,8 @@ services:
 networks:
   joaobank:
     driver: "bridge"
+
+volumes:
+  accounts_data:
+  loans_data:
+  cards_data:

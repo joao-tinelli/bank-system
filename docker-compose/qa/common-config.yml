@@ -8,11 +8,11 @@ services:
       service: network-deploy-service
     image: mysql
     healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-      timeout: 10s
-      retries: 10
+      test: [ "CMD-SHELL", "mysql -h localhost -u root -proot -e 'select 1'" ]
       interval: 10s
-      start_period: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
     environment:
       MYSQL_ROOT_PASSWORD: root
 
