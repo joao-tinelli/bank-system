@@ -49,3 +49,9 @@ info:
     name: "loans"
     description: "JoaoBank Loans Application"
     version: "1.0.0"
+
+logging:
+  level:
+    com:
+      joaotinelli:
+        loans: DEBUG

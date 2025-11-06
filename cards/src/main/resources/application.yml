@@ -46,3 +46,9 @@ info:
     name: "cards"
     description: "JoaoBank Cards Application"
     version: "1.0.0"
+
+logging:
+  level:
+    com:
+      joaotinelli:
+        cards: DEBUG
