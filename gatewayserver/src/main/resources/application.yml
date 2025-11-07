@@ -33,3 +33,11 @@ logging:
     com:
       joaotinelli:
         gatewayserver: DEBUG
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      slidingWindowSize: 10 # "please, monitor at least 10 requests before changing from close state to open state"
+      permittedNumberOfCallsInHalfOpenState: 2 # "please, allow 2 requests in half-open state"
+      failureRateThreshold: 50 # if more than half of requests fail, then move to open state
+      waitDurationInOpenState: 10000 # 10s

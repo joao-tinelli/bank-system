@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient("loans")
+@FeignClient(value = "loans", fallback = LoansFallback.class)
 public interface LoansFeignClient {
 
     // We just tell Feign Client how to connect to loans microservice
