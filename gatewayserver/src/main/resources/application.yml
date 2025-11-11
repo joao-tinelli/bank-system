@@ -5,6 +5,9 @@ spring:
     import: "optional:configserver:http://localhost:8071/" # load the configurations during startup
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 1000 # 1s to connect to a microservice
+        response-timeout: 5s # 5s to get a response from a microservice
       discovery:
         locator:
           enabled: false

@@ -13,4 +13,6 @@ public interface LoansFeignClient {
     // We just tell Feign Client how to connect to loans microservice
     @GetMapping(value = "/api/fetch", consumes = "application/json")
     public ResponseEntity<LoansDto> fetchLoanDetails(@RequestHeader("joaobank-correlation-id") String correlationId, @RequestParam String mobileNumber);
+
+
 }
