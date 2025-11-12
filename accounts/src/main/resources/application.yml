@@ -73,6 +73,7 @@ resilience4j.circuitbreaker:
       failureRateThreshold: 50 # if more than half of requests fail, then move to open state
       waitDurationInOpenState: 10000 # 10s
 
+
 resilience4j.retry:
   configs:
     default:
@@ -84,3 +85,11 @@ resilience4j.retry:
         - java.lang.NullPointerException
       retryExceptions:
         - java.util.concurrent.TimeoutException
+
+resilience4j.ratelimiter:
+  configs:
+    default:
+      timeoutDuration: 1000
+      limitRefreshPeriod: 5000
+      limitForPeriod: 1
+      # only 1 request is allowed per 5s

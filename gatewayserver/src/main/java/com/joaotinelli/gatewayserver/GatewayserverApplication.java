@@ -2,13 +2,18 @@ package com.joaotinelli.gatewayserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.gateway.filter.ratelimit.KeyResolver;
+import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
+import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+
+import static ch.qos.logback.classic.spi.ThrowableProxyVO.build;
 
 @SpringBootApplication
 public class GatewayserverApplication {
@@ -39,8 +44,21 @@ public class GatewayserverApplication {
                 .route(p -> p
                         .path("/joaobank/cards/**")
                         .filters( f -> f.rewritePath("/joaobank/cards/(?<segment>.*)","/${segment}")
-                                .addResponseHeader("X-Response-Time", LocalDateTime.now().toString()))
+                                .addResponseHeader("X-Response-Time", LocalDateTime.now().toString())
+                                .requestRateLimiter(config -> config.setRateLimiter(redisRateLimiter())
+                                        .setKeyResolver(userKeyResolver())))
                         .uri("lb://CARDS")).build();
+    }
+
+    @Bean
+    public RedisRateLimiter redisRateLimiter() {
+        return new RedisRateLimiter(1, 1, 1);
+    }
+
+    @Bean
+    KeyResolver userKeyResolver() {
+        return exchange -> Mono.justOrEmpty(exchange.getRequest().getHeaders().getFirst("user"))
+                .defaultIfEmpty("anonymous");
     }
 
 }
