@@ -76,7 +76,7 @@
                 <version>3.4.6</version>
                 <configuration>
                     <to>
-                        <image>joaotinelli/${project.artifactId}:s10</image>
+                        <image>joaotinelli/${project.artifactId}:s12</image>
                     </to>
                 </configuration>
             </plugin>
