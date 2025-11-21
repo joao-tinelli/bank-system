@@ -77,7 +77,7 @@ services:
       service: microservice-db-config
 
   configserver:
-    image: "joaotinelli/configserver:s12"
+    image: "joaotinelli/configserver:s13"
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -95,7 +95,7 @@ services:
       service: microservice-base-config
 
   eurekaserver:
-    image: "joaotinelli/eurekaserver:s12"
+    image: "joaotinelli/eurekaserver:s13"
     container_name: eurekaserver-ms
     ports:
       - "8070:8070"
@@ -117,7 +117,7 @@ services:
       SPRING_APPLICATION_NAME: "eurekaserver"
 
   accounts:
-    image: "joaotinelli/accounts:s12"
+    image: "joaotinelli/accounts:s13"
     container_name: accounts-ms
     healthcheck:
       test: "curl --fail --silent localhost:8080/actuator/health/readiness | grep UP || exit 1"
@@ -140,7 +140,7 @@ services:
       service: microservice-eurekaserver-config
 
   loans:
-    image: "joaotinelli/loans:s12"
+    image: "joaotinelli/loans:s13"
     container_name: loans-ms
     healthcheck:
       test: "curl --fail --silent localhost:8090/actuator/health/readiness | grep UP || exit 1"
@@ -163,7 +163,7 @@ services:
       service: microservice-eurekaserver-config
 
   cards:
-    image: "joaotinelli/cards:s12"
+    image: "joaotinelli/cards:s13"
     container_name: cards-ms
     healthcheck:
       test: "curl --fail --silent localhost:9000/actuator/health/readiness | grep UP || exit 1"
@@ -186,7 +186,7 @@ services:
       service: microservice-eurekaserver-config
 
   gatewayserver:
-    image: "joaotinelli/gatewayserver:s12"
+    image: "joaotinelli/gatewayserver:s13"
     container_name: gatewayserver-ms
     ports:
       - "8072:8072"
@@ -210,6 +210,18 @@ services:
     extends:
       file: common-config.yml
       service: microservice-eurekaserver-config
+
+  message:
+    image: "joaotinelli/message:s13"
+    container_name: message-ms
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    environment:
+      SPRING_RABBITMQ_HOST: "rabbit"
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
 
 networks:
   joaobank:
