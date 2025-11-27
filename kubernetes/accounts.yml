@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accounts-deployment
+  labels:
+    app: accounts
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: accounts
+  template:
+    metadata:
+      labels:
+        app: accounts
+    spec:
+      containers:
+        - name: accounts
+          image: joaotinelli/accounts:s13
+          ports:
+            - containerPort: 8080
+          
+          # 1. ENVIRONMENT VARIABLES
+          env:
+            # Critical: This name tells Config Server which file to look for (accounts.yml)
+            - name: SPRING_APPLICATION_NAME
+              value: "accounts"
+            # Critical: Connects to the specific K8s Service "accountsdb" created
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:mysql://accountsdb:3306/accountsdb"
+          
+          # 2. LOAD GLOBAL CONFIG
+          envFrom:
+            - configMapRef:
+                name: joaobank-configmap
+          
+          # 3. PROBES
+          # Ensures the pod doesn't accept traffic until it's fully booted
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  # This name "accounts" allows other services to find it via DNS if needed
+  name: accounts
+spec:
+  selector:
+    app: accounts
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  # 4. SERVICE TYPE
+  # ClusterIP makes this service reachable ONLY from inside the cluster.
+  # External traffic must go through the Gateway (which we will build last).
+  type: ClusterIP

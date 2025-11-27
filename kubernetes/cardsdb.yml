@@ -1,0 +1,78 @@
+# 1. STORAGE REQUEST (PVC)
+# This asks Kubernetes for 2GB of disk space on your host machine.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cards-db-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+# 2. DATABASE DEPLOYMENT
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cardsdb
+  labels:
+    app: cardsdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cardsdb
+  template:
+    metadata:
+      labels:
+        app: cardsdb
+    spec:
+      containers:
+        - name: cardsdb
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+          
+          # Environment Variables
+          env:
+            # Specific to this DB
+            - name: MYSQL_DATABASE
+              value: "cardsdb"
+          # Load Global Configs (Root password, Auth Plugin)
+          envFrom:
+            - configMapRef:
+                name: joaobank-configmap
+          
+          # Mount the PVC volume
+          volumeMounts:
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
+          
+          # Health Check
+          readinessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            
+      volumes:
+        - name: mysql-storage
+          persistentVolumeClaim:
+            claimName: cards-db-pvc
+---
+# 3. SERVICE
+apiVersion: v1
+kind: Service
+metadata:
+  # This name MUST match Spring Boot JDBC URL (jdbc:mysql://cards:3306/...)
+  name: cardsdb 
+spec:
+  selector:
+    app: cardsdb
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  # ClusterIP keeps the DB internal. No external access allowed (Security Best Practice).
+  type: ClusterIP

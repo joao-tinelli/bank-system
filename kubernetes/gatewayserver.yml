@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gatewayserver-deployment
+  labels:
+    app: gatewayserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gatewayserver
+  template:
+    metadata:
+      labels:
+        app: gatewayserver
+    spec:
+      containers:
+        - name: gatewayserver
+          image: joaotinelli/gatewayserver:s13
+          ports:
+            - containerPort: 8072
+          
+          # 1. ENVIRONMENT VARIABLES
+          env:
+            - name: SPRING_APPLICATION_NAME
+              value: "gatewayserver"
+            - name: OTEL_SERVICE_NAME
+              value: "gatewayserver"
+            # Redis Configuration (Essential for Rate Limiting)
+            - name: SPRING_DATA_REDIS_HOST
+              value: "redis"
+            - name: SPRING_DATA_REDIS_PORT
+              value: "6379"
+            - name: SPRING_DATA_REDIS_CONNECT-TIMEOUT
+              value: "2s"
+            - name: SPRING_DATA_REDIS_TIMEOUT
+              value: "1s"
+          
+          # 2. LOAD GLOBAL CONFIG
+          # Gets Keycloak URL, RabbitMQ Host, Config Server URL, etc.
+          envFrom:
+            - configMapRef:
+                name: joaobank-configmap
+          
+          # 3. PROBES
+          # Gateway takes longer to start because it waits for routes to be refreshed
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8072
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8072
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gatewayserver
+spec:
+  selector:
+    app: gatewayserver
+  # 4. EXTERNAL ACCESS
+  # This exposes the API Gateway to your host machine (browser/Postman)
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8072
+      targetPort: 8072

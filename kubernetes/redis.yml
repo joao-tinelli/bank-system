@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          ports:
+            - containerPort: 6379
+          
+          # 1. HEALTH CHECKS
+          # We use the native redis-cli to check if the server is responsive.
+          # If 'redis-cli ping' returns 0 (Success), the pod is healthy.
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  # 2. CRITICAL NAME
+  # This must be "redis" to match SPRING_DATA_REDIS_HOST in your ConfigMap
+  name: redis
+spec:
+  selector:
+    app: redis
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+  # 3. SERVICE TYPE
+  # ClusterIP is best for Redis as it is an internal cache. 
+  # You usually don't need to access it from your browser.
+  type: ClusterIP

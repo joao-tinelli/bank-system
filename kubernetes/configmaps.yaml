@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: joaobank-configmap
+data:
+  # Global Spring Config
+  SPRING_PROFILES_ACTIVE: "prod"
+  SPRING_CONFIG_IMPORT: "configserver:http://configserver:8071/"
+  
+  # Service Discovery
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: "http://eurekaserver:8070/eureka/"
+  
+  # Application Names (Used for referencing in code/logs)
+  CONFIGSERVER_APPLICATION_NAME: "configserver"
+  EUREKA_APPLICATION_NAME: "eurekaserver"
+  ACCOUNTS_APPLICATION_NAME: "accounts"
+  LOANS_APPLICATION_NAME: "loans"
+  CARDS_APPLICATION_NAME: "cards"
+  GATEWAY_APPLICATION_NAME: "gatewayserver"
+  
+  # Infrastructure Hosts 
+  SPRING_RABBITMQ_HOST: "rabbit"
+  SPRING_DATA_REDIS_HOST: "redis"
+  
+  # Security / Keycloak
+  KC_BOOTSTRAP_ADMIN_USERNAME: "admin"
+  KC_BOOTSTRAP_ADMIN_PASSWORD: "admin"
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: "http://keycloak:7080/realms/master/protocol/openid-connect/certs"
+  
+  # Database Global Config
+  MYSQL_ROOT_PASSWORD: "root"
+  MYSQL_AUTHENTICATION_PLUGIN: "mysql_native_password"

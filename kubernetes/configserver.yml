@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: configserver-deployment
+  labels:
+    app: configserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: configserver
+  template:
+    metadata:
+      labels:
+        app: configserver
+    spec:
+      containers:
+        - name: configserver
+          image: joaotinelli/configserver:s13
+          ports:
+            - containerPort: 8071
+          
+          # 1. LINK TO CONFIGMAP
+          # This injects all variables (SPRING_PROFILES_ACTIVE, RABBITMQ_HOST, etc.)
+          envFrom:
+            - configMapRef:
+                name: joaobank-configmap
+          
+          # 2. HEALTH CHECKS (Probes)
+          # These replace the "healthcheck" from Docker Compose
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8071
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8071
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: configserver 
+spec:
+  selector:
+    app: configserver
+  # 3. SERVICE TYPE
+  # LoadBalancer allows you to access http://localhost:8071 from your browser
+  # to verify configs. For internal-only apps, ClusterIP is usually enough.
+  type: LoadBalancer 
+  ports:
+    - protocol: TCP
+      port: 8071
+      targetPort: 8071

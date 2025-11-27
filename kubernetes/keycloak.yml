@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:26.4.0
+          # 1. RUN MODE
+          # "start-dev" is essential for local http-only environments
+          args: ["start-dev"]
+          ports:
+            - containerPort: 7080
+          
+          # 2. CONFIGURATION
+          # Loads KC_BOOTSTRAP_ADMIN_USERNAME and PASSWORD from ConfigMap
+          envFrom:
+            - configMapRef:
+                name: joaobank-configmap
+          
+          # 3. PROBES
+          # Keycloak (Quarkus based) exposes health checks on /health
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 7080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 7080
+            initialDelaySeconds: 60
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+spec:
+  selector:
+    app: keycloak
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 7080
+      targetPort: 7080
